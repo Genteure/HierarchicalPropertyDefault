@@ -1,0 +1,33 @@
+name: Build .NET
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build -c release --no-restore
+    - name: Test
+      run: dotnet test -c release --no-build --verbosity normal
+    - uses: actions/upload-artifact@v2
+      with:
+        name: build-artifact
+        path: src/HierarchicalPropertyDefault/bin/Release/netstandard2.0/*
+    - uses: actions/upload-artifact@v2
+      with:
+        name: nuget-packages
+        path: src/HierarchicalPropertyDefault/bin/Release/*nupkg
