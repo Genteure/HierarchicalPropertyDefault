@@ -1,11 +1,11 @@
-name: Build
+name: Publish
 
 on:
   push:
-  pull_request:
+    tags: [ 'v*' ]
 
 jobs:
-  build:
+  publish:
 
     runs-on: ubuntu-latest
 
@@ -35,4 +35,5 @@ jobs:
       with:
         name: HierarchicalPropertyDefault.snupkg
         path: src/HierarchicalPropertyDefault/bin/Release/HierarchicalPropertyDefault.*.snupkg
-
+    - name: Publish Nuget Packages
+      run: dotnet nuget push src/HierarchicalPropertyDefault/bin/Release/HierarchicalPropertyDefault.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
