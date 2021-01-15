@@ -19,7 +19,7 @@ namespace HierarchicalPropertyDefault
             return this;
         }
 
-        public MappingConfiguration<TSource, TTarget> AutoMap() => this.AutoMap(x => Array.Empty<string>());
+        public MappingConfiguration<TSource, TTarget> AutoMap() => this.AutoMap(_ => Array.Empty<string>());
 
         public MappingConfiguration<TSource, TTarget> AutoMap(Func<PropertyInfo, IReadOnlyList<string>> getDependents)
         {

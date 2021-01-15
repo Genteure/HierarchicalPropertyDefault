@@ -110,8 +110,8 @@ namespace HierarchicalPropertyDefault
             else
             {
                 this.propertyValues.AddOrUpdate(propertyName,
-                    key => new ValueWrapper<T> { Value = value },
-                    (key, old) =>
+                    _ => new ValueWrapper<T> { Value = value },
+                    (_, old) =>
                     {
                         if (old is ValueWrapper<T> reuse)
                         {

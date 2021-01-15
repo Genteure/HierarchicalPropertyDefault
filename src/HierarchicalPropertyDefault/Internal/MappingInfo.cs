@@ -6,6 +6,22 @@ using System.Reflection;
 
 namespace HierarchicalPropertyDefault.Internal
 {
+    internal abstract class MappingInfo<TSource>
+    {
+        protected MappingInfo(PropertyInfo targetProperty, IReadOnlyList<PropertyInfo> sourceProperties, IReadOnlyList<string> dependents)
+        {
+            this.TargetProperty = targetProperty ?? throw new ArgumentNullException(nameof(targetProperty));
+            this.SourceProperties = sourceProperties ?? throw new ArgumentNullException(nameof(sourceProperties));
+            this.Dependents = dependents ?? throw new ArgumentNullException(nameof(dependents));
+        }
+
+        public PropertyInfo TargetProperty { get; protected set; }
+
+        public IReadOnlyList<PropertyInfo> SourceProperties { get; protected set; }
+
+        public IReadOnlyList<string> Dependents { get; }
+    }
+
     internal class MappingInfo<TSource, TValue> : MappingInfo<TSource>
     {
         public MappingInfo(PropertyInfo targetProperty, IReadOnlyList<PropertyInfo> sourceProperties, IReadOnlyList<string> dependents) : base(targetProperty, sourceProperties, dependents)
@@ -35,7 +51,7 @@ namespace HierarchicalPropertyDefault.Internal
             var def = Expression.Default(typeof(TValue));
             var body = sourceProperties.Reverse().Aggregate(arg as Expression, (e, p) => Expression.Property(e, p));
             for (int i = sourceProperties.Count - 1; i >= 0; i--)
-                body = Expression.Condition(Expression.Equal(sourceProperties.Reverse().Take(i).Aggregate(arg as Expression, (e, p) => Expression.Property(e, p)), nul), def, body);
+                body = Expression.Condition(Expression.Equal(sourceProperties.Reverse().Take(i).Aggregate(arg as Expression, (e, p) => Expression.Property(e, p)), NullExpression.Null), def, body);
             var exp = Expression.Lambda<Func<TSource, TValue>>(body, arg);
             this.GetValue = exp.Compile();
         }
@@ -44,23 +60,5 @@ namespace HierarchicalPropertyDefault.Internal
             => this.GetValue = getValueFunc ?? throw new ArgumentNullException(nameof(getValueFunc));
 
         public Func<TSource, TValue> GetValue { get; }
-    }
-
-    internal abstract class MappingInfo<TSource>
-    {
-        protected static readonly Expression nul = Expression.Constant(null);
-
-        protected MappingInfo(PropertyInfo targetProperty, IReadOnlyList<PropertyInfo> sourceProperties, IReadOnlyList<string> dependents)
-        {
-            this.TargetProperty = targetProperty ?? throw new ArgumentNullException(nameof(targetProperty));
-            this.SourceProperties = sourceProperties ?? throw new ArgumentNullException(nameof(sourceProperties));
-            this.Dependents = dependents ?? throw new ArgumentNullException(nameof(dependents));
-        }
-
-        public PropertyInfo TargetProperty { get; protected set; }
-
-        public IReadOnlyList<PropertyInfo> SourceProperties { get; protected set; }
-
-        public IReadOnlyList<string> Dependents { get; }
     }
 }

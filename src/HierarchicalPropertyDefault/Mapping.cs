@@ -33,7 +33,7 @@ namespace HierarchicalPropertyDefault
         public Type TargetType { get; private set; }
 
         internal T? GetValue<T>(TSource? parent, string propertyName)
-            => parent is null || propertyName is null
+            => parent is null
                 ? default
                 : this.TargetLookupDictionary.TryGetValue(propertyName, out var v)
                     && v is MappingInfo<TSource, T> mi

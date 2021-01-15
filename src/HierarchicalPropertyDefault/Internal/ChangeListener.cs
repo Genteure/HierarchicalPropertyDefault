@@ -156,19 +156,19 @@ namespace HierarchicalPropertyDefault.Internal
                 }
             }
             return;
-            void AddTarget(string targetName, string sourceName)
+            void AddTarget(string localTargetName, string localSourceName)
             {
                 List<string> list;
-                if (this.Targets.ContainsKey(sourceName))
-                    list = this.Targets[sourceName];
+                if (this.Targets.ContainsKey(localSourceName))
+                    list = this.Targets[localSourceName];
                 else
                 {
                     list = new();
-                    this.Targets[sourceName] = list;
+                    this.Targets[localSourceName] = list;
                 }
 
-                if (!list.Contains(targetName))
-                    list.Add(targetName);
+                if (!list.Contains(localTargetName))
+                    list.Add(localTargetName);
             }
         }
 
