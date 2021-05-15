@@ -28,9 +28,18 @@ namespace HierarchicalPropertyDefault
             // if the other object is the same type as this
             if (other is Optional<T> h)
             {
-                // if both object doesn't have value,
-                // or their values are equal.
-                return !(this.hasValue || h.hasValue) || EqualityComparer<T>.Default.Equals(this.value!, h.value!);
+                /**
+                 * this.hasValue h.hasValue this.value h.value should_return
+                 *    true         true        true     true     true   // all equal
+                 *    true         true        false    false    true   // all equal
+                 *    true         true        true     false    false  // different value
+                 *    true         true        false    true     false  // different value
+                 *    false        true        N/A       ANY     false  // one don't have value
+                 *    true         false       ANY       N/A     false  // one don't have value
+                 *    false        false       N/A       N/A     true   // both don't have value
+                 */
+
+                return this.hasValue == h.hasValue && (!this.hasValue || EqualityComparer<T>.Default.Equals(this.value!, h.value!));
             }
             else
             {
